@@ -53,9 +53,6 @@ int main(int argc, char*argv[]) {
             DieWithError("accept() failed");
         //clntSock is connected to a client!
         printf("Handling client %s\n", inet_ntoa(clntAddr.sin_addr));
-        
-        // HandleTCPClient(clntSock);
-        
+        HandleTCPClient(clntSock);
     }
-    // HandleTCPClient(1);
 }
