@@ -13,31 +13,35 @@ void HandleTCPClient(int clntSocket) {
 
     struct pkt * buffer; 
     int recvMsgSize;
-    if((recvMsgSize = recv(clntSocket, buffer, 85, 0)) < 0)
+    if((recvMsgSize = recv(clntSocket, buffer, 90, 0)) < 0) //85
         DieWithError("recv() failed");
-    
-
+        
+    printf("%s\n", buffer->data);
+    printf("%d\n", ntohs(buffer->count));
+    printf("%d\n", ntohs(buffer->seq));
     char * filename = buffer->data;
     FILE *fp;
     char buff[BUFFERSIZE];
     short seq_num = 1;
-    
+    struct pkt packet;
 
     fp = fopen(filename, "r");
     if(fp == NULL) {
         DieWithError("Error");
     }
-    // while (fgets(buff, BUFFERSIZE, fp) != NULL) {
-    //     struct pkt packet;
-    //     strcpy(packet.data, buff);
-    //     packet.seq = seq_num++;
-    //     packet.count = strlen(packet.data);
-    //     // printf("%s", packet.message);
-    //     // printf("%d\n",packet.seq);
-        
-    //     if (send(clntSocket, &packet, packet.count, 0) != packet.count)
-    //         DieWithError(packet.count);
-    // }
+    
+    int count;
+    while (fgets(buff, BUFFERSIZE, fp) != NULL) {
+        strcpy(packet.data, buff);
+        packet.seq = htons(seq_num++);
+        packet.count = htons(strlen(packet.data));
+        printf("%s", packet.data);
+        printf("seq %d\n",ntohs(packet.seq));
+        printf("count %d\n", ntohs(packet.count));
+        if (count = send(clntSocket, &packet, sizeof(packet), 0) != sizeof(packet))
+            DieWithError("send() failed");
+        printf("SENTTTT: %d\n", count);
+    }
     
     // fclose(fp);
 }

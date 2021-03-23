@@ -14,10 +14,10 @@ DieWithError.o: DieWithError.c
 HandleTCPClient.o: HandleTCPClient.c packet.h
 	$(CC) -c HandleTCPClient.c
 
-Server.o: Server.c
+Server.o: Server.c packet.h
 	$(CC) -c Server.c
 
-Client.o: Client.c
+Client.o: Client.c packet.h
 	$(CC) -c Client.c
 
 clean:

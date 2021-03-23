@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
     // scanf("%s", filename);
     strcpy(packet.data, "./sample.txt"); // temoline
     packet.count = htons(strlen(packet.data));
-    packet.seq = htons(0);
+    packet.seq = htons(100);
+    // printf("%d\n", sizeof(struct pkt));
 
     // filenameLen = strlen(filename);
 
