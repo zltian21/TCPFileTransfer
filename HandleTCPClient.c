@@ -11,39 +11,44 @@ void DieWithError(char *errorMessage);
 
 void HandleTCPClient(int clntSocket) {
 
-    struct pkt * buffer; 
+    struct header * hder_buff; 
+    char filename[BUFFERSIZE];
     int recvMsgSize;
-    if((recvMsgSize = recv(clntSocket, buffer, 90, 0)) < 0) //85
-        DieWithError("recv() failed");
+    if((recvMsgSize = recv(clntSocket, hder_buff, 4, 0)) < 0)
+        DieWithError("recv()header failed");
+    
+    if((recvMsgSize = recv(clntSocket, filename, 81, 0)) < 0)
+        DieWithError("recv()filename failed");
         
-    printf("%s\n", buffer->data);
-    printf("%d\n", ntohs(buffer->count));
-    printf("%d\n", ntohs(buffer->seq));
-    char * filename = buffer->data;
+    // printf("%d\n", ntohs(hder_buff->count));
+    // printf("%d\n", ntohs(hder_buff->seq));
+    // printf("%s\n", filename);
+
     FILE *fp;
     char buff[BUFFERSIZE];
     short seq_num = 1;
-    struct pkt packet;
+    struct header hder;
 
     fp = fopen(filename, "r");
     if(fp == NULL) {
         DieWithError("Error");
     }
     
-    int count;
+    // int count;
     while (fgets(buff, BUFFERSIZE, fp) != NULL) {
-        strcpy(packet.data, buff);
-        packet.seq = htons(seq_num++);
-        packet.count = htons(strlen(packet.data));
-        printf("%s", packet.data);
-        printf("seq %d\n",ntohs(packet.seq));
-        printf("count %d\n", ntohs(packet.count));
-        if (count = send(clntSocket, &packet, sizeof(packet), 0) != sizeof(packet))
-            DieWithError("send() failed");
-        printf("SENTTTT: %d\n", count);
+
+        hder.seq = htons(seq_num++);
+        hder.count = htons(strlen(buff));
+        // printf("%s", buff);
+        // printf("seq %d\n",ntohs(hder.seq));
+        // printf("count %d\n", ntohs(hder.count));
+        if (send(clntSocket, &hder, sizeof(hder), 0) != sizeof(hder))
+            DieWithError("send()Header failed");
+        if (send(clntSocket, buff, strlen(buff), 0) != strlen(buff))
+            DieWithError("send()Line failed");
     }
     
-    // fclose(fp);
+    fclose(fp);
 }
 
 

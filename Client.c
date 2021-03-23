@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
     unsigned short servPort;
     char *servIP;
     char filename[BUFFERSIZE];// for filename
-    struct pkt packet;
+    short nameLen;
+    struct header hder;
     // unsigned int filenameLen;
     int bytesRcvd;
     
@@ -26,10 +27,10 @@ int main(int argc, char *argv[]) {
     //Get filename
     // printf("Enter the filename to get from server:\n");
     // scanf("%s", filename);
-    strcpy(packet.data, "./sample.txt"); // temoline
-    packet.count = htons(strlen(packet.data));
-    packet.seq = htons(100);
-    // printf("%d\n", sizeof(struct pkt));
+    strcpy(filename, "./sample.txt"); // temoline
+    hder.count = htons(strlen(filename));
+    hder.seq = htons(100);
+    // printf("%d\n", sizeof(struct header));
 
     // filenameLen = strlen(filename);
 
@@ -48,6 +49,9 @@ int main(int argc, char *argv[]) {
         DieWithError("connect() failed");
     
     //Send the struct
-    if (send(sock, &packet, sizeof(packet), 0) != sizeof(packet))
-        DieWithError("send() sent a different number of bytes than expected");
+    if (send(sock, &hder, sizeof(hder), 0) != sizeof(hder))
+        DieWithError("send() header sent a different number of bytes than expected");
+    
+    if (send(sock, filename, strlen(filename), 0) != strlen(filename))
+        DieWithError("send() data sent a different number of bytes than expected");
 }

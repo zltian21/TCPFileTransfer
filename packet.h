@@ -1,9 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct pkt { // total bytes = 81 + 2 + 2 = 85
-    char data[81]; //80 printable character and 1 null terminating character 
+// struct pkt { // total bytes = 81 + 2 + 2 = 85
+//     char data[81]; //80 printable character and 1 null terminating character 
+//     short count;
+//     short seq;
+//     char padding[3];
+// };
+
+struct header { // total bytes = 81 + 2 + 2 = 85
     short count;
     short seq;
-    char padding[3];
 };
