@@ -22,10 +22,6 @@ void HandleTCPClient(int clntSocket) {
     
     if((recvMsgSize = recv(clntSocket, filename, tempSize, 0)) < 0)
         DieWithError("recv()filename failed");
-    
-    // printf("%d\n", ntohs(hder_buff->count));
-    // printf("%d\n", ntohs(hder_buff->seq));
-    // printf("%s\n", filename);
 
     FILE *fp;
     char buff[BUFFERSIZE];
@@ -37,7 +33,6 @@ void HandleTCPClient(int clntSocket) {
         DieWithError("Error");
     }
     
-    // int count;
     while (fgets(buff, BUFFERSIZE, fp) != NULL) {
         hder.seq = htons(seq_num++);
         hder.count = htons(strlen(buff));
@@ -49,7 +44,6 @@ void HandleTCPClient(int clntSocket) {
 
         if (send(clntSocket, buff, strlen(buff)+1, 0) != strlen(buff)+1)
             DieWithError("send()Line failed");
-        printf("HEHRERENMSL");
     }
 
     //EOT
@@ -61,7 +55,6 @@ void HandleTCPClient(int clntSocket) {
     
     if (send(clntSocket, buff, strlen(buff), 0) != strlen(buff))
             DieWithError("send()EOT Line failed");
-    printf("HAHAHAHAHAH");
     fclose(fp);
     close(clntSocket);
 }

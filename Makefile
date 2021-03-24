@@ -1,6 +1,7 @@
 CC=gcc
 
 all: Server Client
+	rm -f out.txt
 
 OTHER_OBSS = DieWithError.o HandleTCPClient.o
 
@@ -21,4 +22,4 @@ Client.o: Client.c packet.h
 	$(CC) -c Client.c
 
 clean:
-	rm -f *.o Server Client *~
+	rm -f *.o Server Client *~ out.txt

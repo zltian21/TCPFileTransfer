@@ -24,14 +24,11 @@ int main(int argc, char *argv[]) {
     servPort = 9999;
     
     //Get filename
-    // printf("Enter the filename to get from server:\n");
-    // scanf("%s", filename);
-    strcpy(filename, "./sample.txt"); // temoline
+    printf("Enter the filename to get from server:\n");
+    scanf("%s", filename);
+    //strcpy(filename, "./sample.txt");
     hder.count = htons(strlen(filename));
     hder.seq = htons(100);
-    // printf("%d\n", sizeof(struct header));
-
-    // filenameLen = strlen(filename);
 
     //Create a socket using TCP
     if((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -58,9 +55,10 @@ int main(int argc, char *argv[]) {
     int i = 1;
     short tempSeq;
     short tempCount;
+    FILE *fp;
+    fp = fopen("./out.txt", "w");
     do {
         
-    //     printf("HERE: %d\n", i++);
         if((bytesRcvd = recv(sock, &hder_buff, sizeof(hder_buff), 0)) < 0)
             DieWithError("recv()header failed");
         tempSeq = ntohs(hder_buff.seq);
@@ -68,15 +66,19 @@ int main(int argc, char *argv[]) {
 
         if((bytesRcvd = recv(sock, buff, tempCount > 0 ? tempCount + 1 : tempCount, 0)) < 0)
             DieWithError("recv()buff failed");
-        // printf("%s", buff);
+        printf("%s", buff);
         printf("%d\n", tempSeq);
         printf("%d\n", tempCount);
         printf("%s\n", buff);
+        if(tempCount > 0) {
+            fprintf (fp, "%s", buff);
+        }
 
     } while(tempCount > 0);
 
 
-    // printf("\n");
-	// close(sock);
-	// exit(0);
+    printf("\n");
+    fclose(fp);
+	close(sock);
+	exit(0);
 }
