@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include "packet.h"
 
-#define BUFFERSIZE 81 //80 printable character and 1 null terminating character 
+#define BUFFERSIZE 90 //80 printable character and 1 null terminating character 
 
 void DieWithError(char *errorMessage);
 
@@ -18,7 +18,6 @@ int main(int argc, char *argv[]) {
     char filename[BUFFERSIZE];// for filename
     short nameLen;
     struct header hder;
-    // unsigned int filenameLen;
     int bytesRcvd;
     
     servIP = "127.0.0.1";
@@ -51,7 +50,33 @@ int main(int argc, char *argv[]) {
     //Send the struct
     if (send(sock, &hder, sizeof(hder), 0) != sizeof(hder))
         DieWithError("send() header sent a different number of bytes than expected");
-    
     if (send(sock, filename, strlen(filename), 0) != strlen(filename))
         DieWithError("send() data sent a different number of bytes than expected");
+
+    struct header hder_buff;
+    char buff[BUFFERSIZE];
+    int i = 1;
+    short tempSeq;
+    short tempCount;
+    do {
+        
+    //     printf("HERE: %d\n", i++);
+        if((bytesRcvd = recv(sock, &hder_buff, sizeof(hder_buff), 0)) < 0)
+            DieWithError("recv()header failed");
+        tempSeq = ntohs(hder_buff.seq);
+        tempCount = ntohs(hder_buff.count);
+
+        if((bytesRcvd = recv(sock, buff, tempCount > 0 ? tempCount + 1 : tempCount, 0)) < 0)
+            DieWithError("recv()buff failed");
+        // printf("%s", buff);
+        printf("%d\n", tempSeq);
+        printf("%d\n", tempCount);
+        printf("%s\n", buff);
+
+    } while(tempCount > 0);
+
+
+    // printf("\n");
+	// close(sock);
+	// exit(0);
 }
