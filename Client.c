@@ -6,7 +6,9 @@
 #include <unistd.h>
 #include "packet.h"
 
-#define BUFFERSIZE 90 //80 printable character and 1 null terminating character 
+#define BUFFERSIZE 81 //80 printable character and 1 null terminating character.
+#define IP_ADDRESS "127.0.0.1"
+#define PORT_NO 9999
 
 void DieWithError(char *errorMessage);
 
@@ -15,20 +17,13 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in servAddr;
     unsigned short servPort;
     char *servIP;
-    char filename[BUFFERSIZE];// for filename
+    char filename[BUFFERSIZE];
     short nameLen;
     struct header hder;
     int bytesRcvd;
     
-    servIP = "127.0.0.1";
-    servPort = 9999;
-    
-    //Get filename
-    // printf("Enter the filename to get from server:\n");
-    // scanf("%s", filename);
-    // //strcpy(filename, "./sample.txt");
-    // hder.count = htons(strlen(filename));
-    // hder.seq = htons(100);
+    servIP = IP_ADDRESS;
+    servPort = PORT_NO;
 
     //Create a socket using TCP
     if((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -44,18 +39,19 @@ int main(int argc, char *argv[]) {
     if(connect(sock, (struct sockaddr*)&servAddr, sizeof(servAddr)) < 0)
         DieWithError("connect() failed");
     
+    //Get filename and set packet 0 header
     printf("Enter the filename to get from server:\n");
     scanf("%s", filename);
-    //strcpy(filename, "./sample.txt");
     hder.count = htons(strlen(filename));
     hder.seq = htons(100);
     
-    //Send the struct
+    //Send the filename and packet header
     if (send(sock, &hder, sizeof(hder), 0) != sizeof(hder))
         DieWithError("send() header sent a different number of bytes than expected");
     if (send(sock, filename, strlen(filename), 0) != strlen(filename))
         DieWithError("send() data sent a different number of bytes than expected");
 
+    //Attributes for reciving packet
     struct header hder_buff;
     char buff[BUFFERSIZE];
     int i = 1;

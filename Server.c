@@ -54,6 +54,7 @@ int main(int argc, char*argv[]) {
         //clntSock is connected to a client!
         printf("Handling client %s\n", inet_ntoa(clntAddr.sin_addr));
         HandleTCPClient(clntSock);
+        exit(1);
     }
-    exit(1);
+    
 }

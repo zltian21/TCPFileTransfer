@@ -6,7 +6,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #define BUFFERSIZE 81 //80 printable character and 1 null terminating character 
-// #define EOT "\u0004"
 
 void DieWithError(char *errorMessage);
 
@@ -73,6 +72,7 @@ void HandleTCPClient(int clntSocket) {
     printf("------------------SUMMARY------------------\n");
     printf("Number of data packets transmitted: %d\n", totalPackets);
     printf("Total number of data bytes transmitted: %d\n", totalBytes);
+    printf("\n");
 }
 
 
