@@ -24,11 +24,11 @@ int main(int argc, char *argv[]) {
     servPort = 9999;
     
     //Get filename
-    printf("Enter the filename to get from server:\n");
-    scanf("%s", filename);
-    //strcpy(filename, "./sample.txt");
-    hder.count = htons(strlen(filename));
-    hder.seq = htons(100);
+    // printf("Enter the filename to get from server:\n");
+    // scanf("%s", filename);
+    // //strcpy(filename, "./sample.txt");
+    // hder.count = htons(strlen(filename));
+    // hder.seq = htons(100);
 
     //Create a socket using TCP
     if((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -44,6 +44,12 @@ int main(int argc, char *argv[]) {
     if(connect(sock, (struct sockaddr*)&servAddr, sizeof(servAddr)) < 0)
         DieWithError("connect() failed");
     
+    printf("Enter the filename to get from server:\n");
+    scanf("%s", filename);
+    //strcpy(filename, "./sample.txt");
+    hder.count = htons(strlen(filename));
+    hder.seq = htons(100);
+    
     //Send the struct
     if (send(sock, &hder, sizeof(hder), 0) != sizeof(hder))
         DieWithError("send() header sent a different number of bytes than expected");
@@ -56,7 +62,10 @@ int main(int argc, char *argv[]) {
     short tempSeq;
     short tempCount;
     FILE *fp;
+    int totalPackets = 0;
+    int totalBytes = 0;
     fp = fopen("./out.txt", "w");
+    printf("\n");
     do {
         
         if((bytesRcvd = recv(sock, &hder_buff, sizeof(hder_buff), 0)) < 0)
@@ -66,17 +75,18 @@ int main(int argc, char *argv[]) {
 
         if((bytesRcvd = recv(sock, buff, tempCount > 0 ? tempCount + 1 : tempCount, 0)) < 0)
             DieWithError("recv()buff failed");
-        printf("%s", buff);
-        printf("%d\n", tempSeq);
-        printf("%d\n", tempCount);
-        printf("%s\n", buff);
+
         if(tempCount > 0) {
+            totalPackets++;
+            totalBytes += tempCount;
+            printf("Packet %d received with %d data bytes\n", tempSeq, tempCount);
             fprintf (fp, "%s", buff);
         }
 
     } while(tempCount > 0);
-
-
+    printf("------------------SUMMARY------------------\n");
+    printf("Number of data packets received: %d\n", totalPackets);
+    printf("Total number of data bytes received: %d\n", totalBytes);
     printf("\n");
     fclose(fp);
 	close(sock);
