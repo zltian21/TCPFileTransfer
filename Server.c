@@ -6,12 +6,15 @@
 #include <string.h>
 #include <unistd.h>
 
+
 #define MAXPENDING 5 /* Maximum outstanding connection requests */
+#define PORT_NUMBER 9999
 
 void DieWithError(char *errorMessage);
 void HandleTCPClient(int clntSocket);
 
 int main(int argc, char*argv[]) {
+    
     int servSock;
     int clntSock;
     struct sockaddr_in servAddr;
@@ -19,12 +22,10 @@ int main(int argc, char*argv[]) {
     unsigned short servPort;
     unsigned int clntLen;
 
-    if(argc != 2) {
-        fprintf(stderr, "Usage: %s <Server Port>\n", argv[0]);
-        exit(1);
-    }
+    printf("Initiating Server...\n");
+
     //Port No.
-    servPort = atoi(argv[1]);
+    servPort = PORT_NUMBER;
 
     // Create socket for incoming connection
     if ((servSock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
@@ -43,11 +44,11 @@ int main(int argc, char*argv[]) {
     if (listen(servSock, MAXPENDING) < 0)
         DieWithError("listen() failed");
 
+    printf("Listening on Port %d...\n", servPort);
+
     for (;;) {
         // Set the size of the in-out parameter
-        
         clntLen = sizeof(clntAddr);
-        
         // Wait for a clien to connect
         if ((clntSock = accept(servSock, (struct sockaddr *)&clntAddr, &clntLen)) < 0)
             DieWithError("accept() failed");

@@ -14,14 +14,17 @@ void HandleTCPClient(int clntSocket) {
     struct header * hder_buff; 
     char filename[BUFFERSIZE];
     int recvMsgSize;
-    short tempSize;
+    short filenameSize;
+    //Reveive filename packet header
     if((recvMsgSize = recv(clntSocket, hder_buff, 4, 0)) < 0)
         DieWithError("recv()header failed");
-    tempSize = ntohs(hder_buff->count);
+    filenameSize = ntohs(hder_buff->count);
     
-    if((recvMsgSize = recv(clntSocket, filename, tempSize, 0)) < 0)
+    //receive filename data
+    if((recvMsgSize = recv(clntSocket, filename, filenameSize, 0)) < 0)
         DieWithError("recv()filename failed");
 
+    //Attributes for reading and sending file.
     FILE *fp;
     char buff[BUFFERSIZE];
     short seq_num = 1;
@@ -36,27 +39,32 @@ void HandleTCPClient(int clntSocket) {
         DieWithError("Error");
     }
     printf("\n");
+
+    //While it is not the end of the file: 
+    //read a line to buffer, and send packets to client
     while (fgets(buff, BUFFERSIZE, fp) != NULL) {
+        // Set packet header
         tempSeq = seq_num++;
         tempCount = strlen(buff); 
         hder.seq = htons(tempSeq);
         hder.count = htons(tempCount);
 
+        //Send packet header
         if (send(clntSocket, &hder, sizeof(hder), 0) != sizeof(hder))
             DieWithError("send()Header failed");
-
+        //Send packet data
         if (send(clntSocket, buff, strlen(buff)+1, 0) != strlen(buff)+1)
             DieWithError("send()Line failed");
+        
         printf("Packet %d transmitted with %d data bytes\n", tempSeq, tempCount);
         totalPackets++;
         totalBytes += tempCount;
     }
 
-    //EOT
+    //Send EOT Packet
     memset(buff, 0, sizeof(buff));
     tempSeq = seq_num++;
     tempCount = strlen(buff);
-
     hder.seq = htons(tempSeq);
     hder.count = htons(tempCount);
     if(send(clntSocket, &hder, sizeof(hder), 0) != sizeof(hder))
@@ -65,6 +73,7 @@ void HandleTCPClient(int clntSocket) {
     if (send(clntSocket, buff, strlen(buff), 0) != strlen(buff))
             DieWithError("send()EOT Line failed");
     
+    //print summary
     printf("End of Transmission Packet with sequence number %d transmitted with %d data bytes\n", tempSeq, tempCount);
     fclose(fp);
     close(clntSocket);
