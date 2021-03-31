@@ -1,3 +1,8 @@
+/*
+    Client.c 
+    This file contains code that sets the client, reads filename from user, setups connection with server,
+    sends and receives packets with the server.
+*/
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -13,13 +18,13 @@
 void DieWithError(char *errorMessage);
 
 int main(int argc, char *argv[]) {
-    int sock;
-    struct sockaddr_in servAddr;
-    unsigned short servPort;
-    char *servIP;
-    char filename[BUFFERSIZE];
-    short nameLen;
-    struct header hder;
+    int sock;                               // client socket 
+    struct sockaddr_in servAddr;            // server address struture 
+    unsigned short servPort;                // server port number
+    char *servIP;                           // server IP address
+    char filename[BUFFERSIZE];              // user input filename buffer
+    short nameLen;                          // filename length
+    struct header hder;                     // filename packet header
 
     
     //Set server IP address and port number
@@ -53,14 +58,14 @@ int main(int argc, char *argv[]) {
         DieWithError("send() data sent a different number of bytes than expected");
 
     //Attributes for reciving packet
-    struct header hder_buff;
-    char buff[BUFFERSIZE];
-    int bytesRcvd;
-    short tempSeq;
-    short tempCount;
-    FILE *fp;
-    int totalPackets = 0;
-    int totalBytes = 0;
+    struct header hder_buff;                // header buffer for receiving
+    char buff[BUFFERSIZE];                  // data buffer for receiving
+    int bytesRcvd;                          // bytes actually received
+    short tempSeq;                          // temporary Sequence Number
+    short tempCount;                        // temporary Count(data characters)
+    FILE *fp;                               // file to write
+    int totalPackets = 0;                   // Total packets received
+    int totalBytes = 0;                     // Total data bytes received
     fp = fopen("./out.txt", "w");
     printf("\n");
     

@@ -1,3 +1,8 @@
+/*
+    DieWithError.c
+    Handling and Report Error
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 

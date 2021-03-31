@@ -1,7 +1,12 @@
+/*
+    Server.c 
+    This file contains code that initiating the server,
+    listening on ports, and establishing connection.
+*/
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/socket.h> /*for socket(), connect(), send(), and recv()*/
-#include <arpa/inet.h> /*for sockaddr_in and inet_addr()*/
+#include <sys/socket.h> 
+#include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -15,12 +20,12 @@ void HandleTCPClient(int clntSocket);
 
 int main(int argc, char*argv[]) {
     
-    int servSock;
-    int clntSock;
-    struct sockaddr_in servAddr;
-    struct sockaddr_in clntAddr;
-    unsigned short servPort;
-    unsigned int clntLen;
+    int servSock;                       // server socket
+    int clntSock;                       // client socket
+    struct sockaddr_in servAddr;        // server address structure 
+    struct sockaddr_in clntAddr;        // client address structure
+    unsigned short servPort;            // server port number
+    unsigned int clntLen;               // client structure length
 
     printf("Initiating Server...\n");
 

@@ -22,14 +22,14 @@ Running instructions:
         ./Server
         
         (Note: 9999 is the Port used in the program, it is hard coded in both server and client.
-        If you need to use a different Port, change "PORT_NUMBER" at line 11 in both Server.c and Client.c)
+        If you need to use a different Port, change "PORT_NUMBER" at line 16 in both Server.c and Client.c)
 
     Running the client:
         ./Client
 
         (Note: Server port number"9999" and IP address"127.0.0.1" are hard coded in this program. 
-        If you need to use a different Port, change "PORT_NUMBER" at line 11 in both Server.c and Client.c.
-        If you need to use a different Server IP address, change "IP_ADDRESS" at line 10 in Client.c)
+        If you need to use a different Port, change "PORT_NUMBER" at line 16 in both Server.c and Client.c.
+        If you need to use a different Server IP address, change "IP_ADDRESS" at line 15 in Client.c)
 
 
     After the connection is established, you will be asked to enter the filename at the Client side.

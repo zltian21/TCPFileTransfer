@@ -1,3 +1,7 @@
+/*
+    HandleTCPClient.c
+    This file contains code that reads and sends local file to the client.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -11,10 +15,11 @@ void DieWithError(char *errorMessage);
 
 void HandleTCPClient(int clntSocket) {
 
-    struct header * hder_buff; 
-    char filename[BUFFERSIZE];
-    int recvMsgSize;
-    short filenameSize;
+    struct header * hder_buff;      // header buffer for receiving filename packet header
+    char filename[BUFFERSIZE];      // data buffer for receiving filename data
+    int recvMsgSize;                // actual reveived packet size
+    short filenameSize;             // filename data characters size
+
     //Reveive filename packet header
     if((recvMsgSize = recv(clntSocket, hder_buff, 4, 0)) < 0)
         DieWithError("recv()header failed");
@@ -25,14 +30,14 @@ void HandleTCPClient(int clntSocket) {
         DieWithError("recv()filename failed");
 
     //Attributes for reading and sending file.
-    FILE *fp;
-    char buff[BUFFERSIZE];
-    short seq_num = 1;
-    struct header hder;
-    short tempSeq;
-    short tempCount;
-    int totalPackets = 0;
-    int totalBytes = 0;
+    FILE *fp;                       // file to read
+    char buff[BUFFERSIZE];          // buffer to save read line
+    short seq_num = 1;              // start sequence number
+    struct header hder;             // header to send
+    short tempSeq;                  // temporary sequence number 
+    short tempCount;                // temporary data character count
+    int totalPackets = 0;           // total packets send
+    int totalBytes = 0;             // total data bytes send
 
     fp = fopen(filename, "r");
     if(fp == NULL) {
