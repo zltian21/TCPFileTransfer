@@ -1,7 +1,3 @@
-CISC450
-Yixiong Wu,
-Letian Zhang
-
 List of relevant files:
     Makefile
     packet.h
